@@ -20,7 +20,7 @@ local
                  duration:1.0
                  instrument: none)
 	 end
-	 [] nil then (duration:0.0)
+      [] nil then (duration:0.0)
       end
    end
 
@@ -33,7 +33,17 @@ local
       end
    end
    
-   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   fun {SoundToExtended Sound}
+      case Sound
+      of Note then {NoteToExtended Sound}
+      [] Chord then {ChordToExtended Sound}
+      [] nil then nil
+      end
+   end
+   
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
    fun {PartitionToTimedList Partition}
       
