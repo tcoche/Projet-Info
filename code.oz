@@ -28,7 +28,10 @@ local
 
    fun {ChordToExtended Chord}
       case Chord
-	 of H|T then 
+      of H|T then {NoteToExtended H}|{ChordToExtended T}
+      [] nil then nil
+      end
+   end
    
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
