@@ -29,7 +29,7 @@ local
    fun {ChordToExtended Chord}
       case Chord
       of H|T then {NoteToExtended H}|{ChordToExtended T}
-      [] nil then nil
+      [] nil then {duration:0.0}
       end
    end
    
@@ -51,8 +51,33 @@ local
       [] nil then nil
       end
    end
-   
-   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      
+   fun {Duration Sec Partition}
+      local
+	 S=(Sec div {List.Length Partition}}
+	 fun{Duration1 Sec Partition }
+	     case {FlatPartition Partition}
+	     of nil then nil
+	     [] H|T then case H
+			 of Note then {NoteToExtended H}
+			    {Array.put H duration S}
+			     {Duration1 Sec T}
+			 []Chord then case H
+				      of A|B then {NoteToExtended A}
+					 {Array.put A duration S}
+					 {Duration1 Sec T}
+				      [] nil then nil
+				      end
+			 end
+	     end
+	 in
+	    {Duration1 Sec Partition}
+	 end
+      end
+      
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
    fun {PartitionToTimedList Partition}
       
@@ -65,7 +90,7 @@ local
       {Project.readFile 'wave/animaux/cow.wav'}
    end
 
-   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
    Music = {Project.load 'joy.dj.oz'}
    Start
