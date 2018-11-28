@@ -54,10 +54,10 @@ local
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
-   fun {Duration Sec Partition}
+   fun {Duration duration Partition}
       local
-	 S=(Sec div {List.Length Partition}}
-	 fun{Duration1 Sec Partition }
+	 S=(duration div {List.Length Partition}}
+	 fun{Duration1 duration Partition }
 	     case {FlatPartition Partition}
 	     of nil then nil
 	     [] H|T then case H
@@ -72,10 +72,31 @@ local
 				      end
 			 end
 	     end
-	 in
-	    {Duration1 Sec Partition}
 	 end
+      in
+	 {Duration1 duration Partition}
       end
+   end
+   
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   fun{Stretch factor Partition}
+       case {FlatPartition Partition}
+	     of nil then nil
+	     [] H|T then case H
+			 of Note then {NoteToExtended H}
+			    {Array.put H duration duration*factor}
+			     {Stretch factor T}
+			 []Chord then case H
+				      of A|B then {NoteToExtended A}
+					 {Array.put A duration duration*factor}
+					 {Stretch factor T}
+				      [] nil then nil
+				      end
+			 end
+	     end
+   end
       
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
