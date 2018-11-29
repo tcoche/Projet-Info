@@ -5,6 +5,8 @@ local
 
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % Translate a note to the extended notation.
+   % (On n'a pas d'impact sur la durée ou l'instrument)
+   
    fun {NoteToExtended Note}
       case Note
       of Name#Octave then
@@ -32,8 +34,8 @@ local
 
    fun {ChordToExtended Chord}
       case Chord
-      of H|T then {NoteToExtended H}|{ChordToExtended T}
-      [] nil then {duration:0.0}
+      of nil then nil 
+      [] H|T then {NoteToExtended H}|{ChordToExtended T}
       end
    end
    
