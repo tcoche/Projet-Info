@@ -45,7 +45,7 @@ local
       case Sound
       of Note then {NoteToExtended Sound}
       [] Chord then {ChordToExtended Sound}
-      [] nil then nil
+      [] nil then nil   % Normalement ce cas est deja pris en compte dans []Chord car nil = Chord
       end
    end
    
