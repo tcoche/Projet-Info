@@ -32,6 +32,10 @@ local
 
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% Extend un chord
+% input : chord
+% output : <extended chord>
+   
    fun {ChordToExtended Chord}
       case Chord
       of nil then nil 
@@ -40,6 +44,13 @@ local
    end
    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Extend note ET chord
+% sans devoir vérifier avec quel type on a à faire
+% input : l'argument Sound = note|chord
+% output : la version Extended de l'argument	
+
+%	!!!!!!! case of Note ou Chord ca marche pas !!!! faut changer
 
    fun {SoundToExtended Sound}
       case Sound
@@ -60,7 +71,7 @@ local
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
-   fun {Duration duration Partition}
+   fun {DurationChange duration Partition}
       local
 	 S=(duration div {List.Length Partition}}
 	 fun{Duration1 duration Partition }
