@@ -47,7 +47,7 @@ local
 % output : la version Extended de l'argument	
 
 %	!!!!!!! case of Note ou Chord ca marche pas !!!! faut changer
-
+% de toute façon cette fonction est inutile
    fun {SoundToExtended Sound}
       case Sound
       of Note then {NoteToExtended Sound}
