@@ -47,6 +47,9 @@
    
    case Partition of H|T 
    then 
+     if {IsNote H}
+     then return H extended
+     
      if {isExtendedNote H}
      then 
          return that same already extended note
@@ -57,28 +60,12 @@
      elseif it is a list
      then it is a CHORD
      
-     elseif {IsNote H}
-     then return H extended
-     
      else 
       the only thing left : transformations
      
-     
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-     
-   fun{IsTransformation PartItem}
-     
-     case PartItem of duration(seconds:X Y)
-     then true
-     []stretch(factor:X Y)
-     then true
-     []drone(note:X Y)
-     then true
-     []transpose(semitones:X Y)
-     then true
-     else false
-     end
-   end
+    
+   
+   []nil then nil 
    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
      
@@ -103,13 +90,38 @@
      
      
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%     
+   fun{IsNote PartItem}
+   
+     case PartItem of Name#Octave
+     then true
+     []Atom 
+     then true
+     else false
+     end
+   end  
+   
+   
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+   
+   fun{IsTransformation PartItem}
      
+     case PartItem of duration(seconds:X Y)
+     then true
+     []stretch(factor:X Y)
+     then true
+     []drone(note:X Y)
+     then true
+     []transpose(semitones:X Y)
+     then true
+     else false
+     end
+   end
      
-     
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   
    
+% PARTIE 3 : on mets tout ensemble dans un truc correct
    
-   
-   
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   
    
    
    
