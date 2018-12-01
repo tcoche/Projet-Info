@@ -47,10 +47,7 @@
    
    case Partition of H|T 
    then 
-     if {IsTransformation H}  
-     then ....
-     
-     elseif {isExtendedNote H}
+     if {isExtendedNote H}
      then 
          return that same already extended note
          
@@ -60,7 +57,11 @@
      elseif it is a list
      then it is a CHORD
      
-     else the last item remaining : NOTE
+     elseif {IsNote H}
+     then return H extended
+     
+     else 
+      the only thing left : transformations
      
      
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
