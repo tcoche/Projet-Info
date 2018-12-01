@@ -71,6 +71,8 @@
      
      case PartItem of note(name:V octave:W sharp:X duration:Y instrument:Z)
      then true
+     []silence(duration:X)
+     then true
      else false
      end
    end
@@ -146,6 +148,65 @@
      []nil then nil
    
    end     
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% PARTIE 4 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% La partition doit etre FLAT
+
+   fun{Duration FlatPart}
+      
+      local fun{Duration1 FlatPart Acc}
+      
+        case FlatPart of H|T 
+        then
+          case H of A|B 
+  	  then {Duration1 T (Acc + A.duration)}
+	  else {Duration1 T (Acc + H.duration)}
+	  end
+	[]nil then Acc  
+        end
+      end
+      in
+      
+      {Duration1 FlatPart 0.0}
+      
+      end
+    end
+  end
+      
+ 
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+   fun{DurationChange NewTime Part}
+      
+     local FlatPart in
+     FlatPart = {FlatPartition Partition}
+   
+     local Time in
+     Time = {Duration FlatPart}
+     
+     case FlatPart of H|T
+     then 
+       if {IsExtendedNote H}
+       then note(
+       
+     
+     
+     
+     
+     
+       
+     
+     
+	
+
+
 
 
 
