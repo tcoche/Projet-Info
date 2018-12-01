@@ -1,0 +1,105 @@
+ % PARTIE 1 : extend notes et extend chords
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % Translate a note to the extended notation.
+   % (On n'a pas d'impact sur la durée ou l'instrument)
+   
+   fun {NoteToExtended Note}
+      case Note
+      of Name#Octave then
+         note(name:Name octave:Octave sharp:true duration:1.0 instrument:none)
+      [] Atom then
+         case {AtomToString Atom}
+         of [_] then
+            note(name:Atom octave:4 sharp:false duration:1.0 instrument:none)
+         [] [N O] then
+            note(name:{StringToAtom [N]}
+                 octave:{StringToInt [O]}
+                 sharp:false
+                 duration:1.0
+                 instrument: none)
+	       else silence(duration : 0.0)
+       	 end
+      end
+   end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Extend un chord
+% input : chord
+% output : <extended chord>
+   
+   fun {ChordToExtended Chord}
+      case Chord
+      of nil then nil 
+      [] H|T then {NoteToExtended H}|{ChordToExtended T}
+      end
+   end
+   
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% PARTIE 2 : check quel type est <partition item>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   fun {FlatPartition Partition}
+   case Partition of H|T 
+   then 
+     if {IsTransformation H}  
+     then ....
+     
+     if {isExtendedNote H}
+     then 
+         return that same already extended note
+         
+     if {IsExtendedChord H}
+     then return that same extended chord
+     
+     if it is a list
+     then it is a CHORD
+     
+     else the last item remaining : NOTE
+     
+     
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+     
+   fun{IsTransformation PartItem}
+     
+     case PartItem of duration(seconds:X Y)
+     then true
+     []stretch(factor:X Y)
+     then true
+     []drone(note:X Y)
+     then true
+     []transpose(semitones:X Y)
+     then true
+     else false
+     end
+   end
+     
+     
+     
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+   
+   
+   
+   
+   
+   
+   
+   
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   fun {PartitionToTimedList Partition}
+      % TODO
+      nil
+   end
