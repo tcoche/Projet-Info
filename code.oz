@@ -3,9 +3,12 @@ local
    [Project] = {Link ['Project2018.ozf']}
    Time = {Link ['x-oz://boot/Time']}.1.getReferenceTime
 
-   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   
    % Translate a note to the extended notation.
-   % (On n'a pas d'impact sur la durÃ©e ou l'instrument)
+   % (On n'a pas d'impact sur la durée ou l'instrument)
    
    fun {NoteToExtended Note}
       case Note
@@ -42,17 +45,19 @@ local
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Extend note ET chord
-% sans devoir vÃ©rifier avec quel type on a Ã  faire
+% sans devoir vérifier avec quel type on a à faire
 % input : l'argument Sound = note|chord
 % output : la version Extended de l'argument	
 
 %	!!!!!!! case of Note ou Chord ca marche pas !!!! faut changer
-% de toute faÃ§on cette fonction est inutile
+% de toute façon cette fonction est inutile
+   declare
    fun {SoundToExtended Sound}
       case Sound
-      of Note then {NoteToExtended Sound}
-      [] Chord then {ChordToExtended Sound}
-      [] nil then nil   % Normalement ce cas est deja pris en compte dans []Chord car nil = Chord
+      of Name#Octave then {NoteToExtended Sound}
+      [] H|T then {ChordToExtended Sound}
+      [] Atom then {NoteToExtended Sound}
+      [] nil then nil
       end
    end
    
@@ -66,51 +71,123 @@ local
    end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-      
-   fun {DurationChange duration Partition}
+   % Declaration d'une variable S qui nous donne la durée de chaque
+   % note en fonction du la longeur de la liste. Va changer la durée
+   % de la note ou de l'accord.
+
+   fun {Duration Dur Partition}
       local
-	 S=(duration div {List.Length Partition}}
-	 fun{Duration1 duration Partition }
+	 S=(Dur div {List.Length Partition})
+	 fun{Duration1 Partition}
 	     case {FlatPartition Partition}
 	     of nil then nil
-	     [] H|T then case H
-			 of Note then {NoteToExtended H}
-			    {Array.put H duration S}
-			     {Duration1 Sec T}
-			 []Chord then case H
-				      of A|B then {NoteToExtended A}
-					 {Array.put A duration S}
-					 {Duration1 Sec T}
-				      [] nil then nil
-				      end
-			 end
+	     [] H|T then  {Record.make {SoundToExtended H} duration S}
+		{Duration1 T}
 	     end
 	 end
       in
-	 {Duration1 duration Partition}
+	 {Duration1 Partition}
       end
    end
-   
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-   fun{Stretch factor Partition}
-       case {FlatPartition Partition}
-	     of nil then nil
-	     [] H|T then case H
-			 of Note then {NoteToExtended H}
-			    {Array.put H duration duration*factor}
-			     {Stretch factor T}
-			 []Chord then case H
-				      of A|B then {NoteToExtended A}
-					 {Array.put A duration duration*factor}
-					 {Stretch factor T}
-				      [] nil then nil
-				      end
-			 end
-	     end
+   fun{Stretch Factor Partition}
+      case {FlatPartition Partition}
+      of nil then nil
+      [] H|T then {Record.make {SoundToExtended H} duration duration*Factor}
+      end
    end
-      
+   
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   fun{Drone Sound Amount}
+      local
+	 fun{DroneAcc Sound Amount A}
+	    if Amount==0 then nil
+	    else {DroneAcc Sound Amount-1 A|Sound}
+	    end
+	 in
+	    if Amount>0 then {DroneAcc Sound Amount Sound}
+	    else nil
+	    end
+	 end
+      end
+   end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   fun{TransUp Amount Note}
+      if Amount=1 then
+      case {NoteToExtended Note}
+      of note(name:a octave:Octave sharp:false instrument:none) then note(name:a octave:Octave sharp:true instrument:none) 
+      []note(name:a octave:Octave sharp:true instrument:none) then note(name:b octave:Octave sharp:false instrument:none)
+      []note(name:b octave:Octave sharp:false instrument:none)then note(name:c octave:Octave+1 sharp:false instrument:none)
+      []note(name:c octave:Octave sharp:false instrument:none)then note(name:c octave:Octave sharp:true instrument:none)
+      []note(name:c octave:Octave sharp:true instrument:none)then note(name:d octave:Octave sharp:false instrument:none)
+      []note(name:d octave:Octave sharp:false instrument:none)then note(name:d octave:Octave sharp:true instrument:none)
+      []note(name:d octave:Octave sharp:true instrument:none)then note(name:e octave:Octave sharp:false instrument:none)
+      []note(name:e octave:Octave sharp:false instrument:none)then note(name:f octave:Octave sharp:false instrument:none)
+      []note(name:f octave:Octave sharp:false instrument:none)then note(name:f octave:Octave sharp:true instrument:none)
+      []note(name:f octave:Octave sharp:true instrument:none)then note(name:g octave:Octave sharp:false instrument:none)
+      []note(name:g octave:Octave sharp:false instrument:none)then note(name:g octave:Octave sharp:true instrument:none)
+      []note(name:g octave:Octave sharp:true instrument:none)then note(name:a octave:Octave sharp:false instrument:none)
+      end
+      else
+ case {NoteToExtended Note}
+      of note(name:a octave:Octave sharp:false instrument:none) then {Transup Amount-1 note(name:a octave:Octave sharp:true instrument:none)} 
+      []note(name:a octave:Octave sharp:true instrument:none) then TransUp Amount-1 note(name:b octave:Octave sharp:false instrument:none)}
+      []note(name:b octave:Octave sharp:false instrument:none)then {TransUp Amount-1 note(name:c octave:Octave+1 sharp:false instrument:none)}
+      []note(name:c octave:Octave sharp:false instrument:none)then {TransUp Amount-1 note(name:c octave:Octave sharp:true instrument:none)}
+      []note(name:c octave:Octave sharp:true instrument:none)then {TransUp Amount-1 note(name:d octave:Octave sharp:false instrument:none)}
+      []note(name:d octave:Octave sharp:false instrument:none)then {TransUp Amount-1 note(name:d octave:Octave sharp:true instrument:none)}
+      []note(name:d octave:Octave sharp:true instrument:none)then {TransUp Amount-1 note(name:e octave:Octave sharp:false instrument:none)}
+      []note(name:e octave:Octave sharp:false instrument:none)then {TransUp Amount-1 note(name:f octave:Octave sharp:false instrument:none)}
+      []note(name:f octave:Octave sharp:false instrument:none)then {TransUp Amount-1 note(name:f octave:Octave sharp:true instrument:none)}
+      []note(name:f octave:Octave sharp:true instrument:none)then {TransUp Amount-1 note(name:g octave:Octave sharp:false instrument:none)}
+      []note(name:g octave:Octave sharp:false instrument:none)then {TransUp Amount-1  note(name:g octave:Octave sharp:true instrument:none)}
+      []note(name:g octave:Octave sharp:true instrument:none)then {TransUp Amount-1 note(name:a octave:Octave sharp:false instrument:none)}	 
+   end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+ fun{TransDown Amount Note}
+      if Amount=~1 then
+      case {NoteToExtended Note}
+      of note(name:a octave:Octave sharp:false instrument:none) then note(name:g octave:Octave sharp:true instrument:none) 
+      []note(name:a octave:Octave sharp:true instrument:none) then note(name:a octave:Octave sharp:false instrument:none)
+      []note(name:b octave:Octave sharp:false instrument:none)then note(name:a octave:Octave sharp:true instrument:none)
+      []note(name:c octave:Octave sharp:false instrument:none)then note(name:b octave:Octave-1 sharp:false instrument:none)
+      []note(name:c octave:Octave sharp:true instrument:none)then note(name:c octave:Octave sharp:false instrument:none)
+      []note(name:d octave:Octave sharp:false instrument:none)then note(name:c octave:Octave sharp:true instrument:none)
+      []note(name:d octave:Octave sharp:true instrument:none)then note(name:d octave:Octave sharp:false instrument:none)
+      []note(name:e octave:Octave sharp:false instrument:none)then note(name:d octave:Octave sharp:true instrument:none)
+      []note(name:f octave:Octave sharp:false instrument:none)then note(name:e octave:Octave sharp:false instrument:none)
+      []note(name:f octave:Octave sharp:true instrument:none)then note(name:f octave:Octave sharp:false instrument:none)
+      []note(name:g octave:Octave sharp:false instrument:none)then note(name:f octave:Octave sharp:true instrument:none)
+      []note(name:g octave:Octave sharp:true instrument:none)then note(name:g octave:Octave sharp:false instrument:none)
+      end
+      else
+ case {NoteToExtended Note}
+      of note(name:a octave:Octave sharp:false instrument:none) then {TransDown Amount+1 note(name:g octave:Octave sharp:true instrument:none)} 
+      []note(name:a octave:Octave sharp:true instrument:none) then TransDown Amount+1 note(name:a octave:Octave sharp:false instrument:none)}
+      []note(name:b octave:Octave sharp:false instrument:none)then {TransDown Amount+1 note(name:a octave:Octave sharp:true instrument:none)}
+      []note(name:c octave:Octave sharp:false instrument:none)then {TransDown Amount+1 note(name:b octage:Octave-1 sharp:false instrument:none)}
+      []note(name:c octave:Octave sharp:true instrument:none)then {TransDown Amount+1 note(name:c octave:Octave sharp:false instrument:none)}
+      []note(name:d octave:Octave sharp:false instrument:none)then {TransDown Amount+1 note(name:c octave:Octave sharp:true instrument:none)}
+      []note(name:d octave:Octave sharp:true instrument:none)then {TransDown Amount+1 note(name:d octave:Octave sharp:false instrument:none)}
+      []note(name:e octave:Octave sharp:false instrument:none)then {TransDown Amount+1 note(name:d octave:Octave sharp:true instrument:none)}
+      []note(name:f octave:Octave sharp:false instrument:none)then {TransDown Amount+1 note(name:e octave:Octave sharp:false instrument:none)}
+      []note(name:f octave:Octave sharp:true instrument:none)then {TransDown Amount+1 note(name:f octave:Octave sharp:false instrument:none)}
+      []note(name:g octave:Octave sharp:false instrument:none)then {TransDown Amount+1  note(name:f octave:Octave sharp:true instrument:none)}
+      []note(name:g octave:Octave sharp:true instrument:none)then {TransDown Amount+1 note(name:g octave:Octave sharp:false instrument:none)}	 
+   end
+
+´%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   fun{Transpose Amount Partition}
+      local
+	 fun{TransposeAcc Amount Partition A}
+   
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
    fun {PartitionToTimedList Partition}
