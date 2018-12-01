@@ -57,7 +57,7 @@ local
    end
    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+% c'est la fonction qu'on doit implementer pour le projet, elle est deja presente plus bas
    fun {FlatPartition Partition}
       case Partition
       of H|T then {SoundToExtended H}|{FlatPartition T}
