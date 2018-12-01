@@ -40,7 +40,11 @@
 % PARTIE 2 : check quel type est <partition item>
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   
+   % Sketch de la forme de notre fonction finale 
+   
    fun {FlatPartition Partition}
+   
    case Partition of H|T 
    then 
      if {IsTransformation H}  
@@ -77,13 +81,18 @@
    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
      
+   fun{IsExtendedNote PartItem}
+     
+     case PartItem of note(name:V octave:W sharp:X duration:Y instrument:Z)
+     then true
+     else false
+     end
+   end
      
      
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   
      
-     
-     
-     
-     
+   fun{IsExtendedChord  
      
      
      
