@@ -92,10 +92,16 @@
      
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   
      
-   fun{IsExtendedChord  
+   fun{IsExtendedChord PartItem}
+   
+     case PartItem of H|T then                       %check si c'est une liste
+     {IsExtendedNote H}                              %check si le 1er element = extended note ou pas
+     else false                                      %si c'est pas une liste
+     end
+   end
      
      
-     
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%     
      
      
      
