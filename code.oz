@@ -21,12 +21,8 @@ local
                  sharp:false
                  duration:1.0
                  instrument: none)
+	 else silence(duration : 0.0)
        	 end
-      else silence(duration : 0.0)			
-%[] nil then (duration:0.0)
-% je pense que c'est plutôt :	
-%[]silence then silence(duration:0.0) 
-%mais pour etre sur j'ai mis 'else'
       end
    end
 
