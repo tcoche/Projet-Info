@@ -50,14 +50,14 @@
      if {IsTransformation H}  
      then ....
      
-     if {isExtendedNote H}
+     elseif {isExtendedNote H}
      then 
          return that same already extended note
          
-     if {IsExtendedChord H}
+     elseif {IsExtendedChord H}
      then return that same extended chord
      
-     if it is a list
+     elseif it is a list
      then it is a CHORD
      
      else the last item remaining : NOTE
