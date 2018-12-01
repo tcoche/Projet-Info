@@ -43,7 +43,6 @@
 % Sketch de la forme de notre fonction finale 
  '''  
    fun {FlatPartition Partition}
-   
      case Partition of H|T 
      then 
        if {IsNote H}
@@ -62,9 +61,7 @@
        else 
         the only thing left : transformations
      
-    
-   
-     []nil then nil
+    []nil then nil
    
    end
   ''' 
