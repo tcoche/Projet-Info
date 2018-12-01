@@ -191,6 +191,8 @@
      local Time in
      Time = {Duration FlatPart}
      
+     local fun{DurationChange1 NewTime Time FlatPart} in
+     
      case FlatPart of H|T
      then 
        if {IsExtendedNote H}
