@@ -159,7 +159,7 @@
 
    fun{Duration FlatPart}
       
-      local fun{Duration1 FlatPart Acc}
+     local fun{Duration1 FlatPart Acc}
       
         case FlatPart of H|T 
         then
@@ -174,11 +174,22 @@
       
       {Duration1 FlatPart 0.0}
       
-      end
-    end
-  end
+     end
+   end
       
- 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   fun{DurationChangeChord Chord NewTime Time}
+     
+     case Chord of H|T
+     then 
+       case H of note(name:N octave:O sharp:S duration:D instrument:I) 
+       then note(name:N octave:O sharp:S duration:((NewTime div Time)*D) instrument:I)|{DurationChangeChord T NewTime Time}
+     else nil
+     end
+  end   
+
+
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -198,15 +209,11 @@
        case H of note(name:N octave:O sharp:S duration:D instrument:I)
        then note(name:N octave:O sharp:S duration:((NewTime div Time)*D) instrument:I)|{DurationChange1 NewTime Time T}
        
-       []A|B then
-         case A of note(name:N octave:O sharp:S duration:D instrument:I)
-         then note(name:N octave:O sharp:S duration:((NewTime div Time)*D) instrument:I)|{DurationChange1 NewTime Time B}
+       else {DurationChangeChord H NewTime Time}|{DurationChange1 NewTime Time T} 
        
-         []nil then nil|{DurationChange1 NewTime Time T}
-       
-         end
-	 
        end
+     
+     else nil  	 
      
      end
    end  
@@ -219,8 +226,6 @@
  
      
      
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
    fun {PartitionToTimedList Partition}
