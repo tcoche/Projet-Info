@@ -20,7 +20,7 @@
                  sharp:false
                  duration:1.0
                  instrument: none)
-	       else silence(duration : 0.0)
+	 else silence(duration : 0.0)
        	 end
       end
    end
