@@ -49,7 +49,7 @@ end
 declare
 L = [note(name:a octave:7 sharp:false duration:1.0 instrument:none) note(name:b octave:2 sharp:false duration:2.0 instrument:none) note(name:a octave:5 sharp:true duration:5.0 instrument:none)]
 declare
-NewChord = {DurationChangeChord L 4.0 2.0}
+NewChord = {DurationChangeChord L 4.0}
 {Browse NewChord}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -59,7 +59,7 @@ NewChord = {DurationChangeChord L 4.0 2.0}
 declare
 fun{DurationChange NewTime Part}
    local FlatPart in                        % Toutes les transformations doivent renvoyer une <flat partition>
-      FlatPart = {FlatPartition Part}
+      FlatPart = {FlatPartition Part}       %IL FAUT ENLEVER LE FLATPARTITION et flat doit deja l'etre
       local Time in                            % duree de la partition
 	 Time = {Duration FlatPart}
 	 local NewTimeF in                      % facteur par lequel il faut multiplier tout duration
