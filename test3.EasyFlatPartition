@@ -1,0 +1,43 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% This is a test version of FlatPartition without the transformations    OK REUSSI
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+declare
+fun {FlatPartition Partition}
+   case Partition of H|T 
+   then
+      if {IsList H}
+      then
+	 if{IsExtendedChord H}
+	 then H|{FlatPartition T}
+	 else {ChordToExtended H}|{FlatPartition T}
+	 end
+
+      elseif {IsNote H}
+      then {NoteToExtended H}|{FlatPartition T}
+      
+      elseif {IsExtendedNote H}
+      then H|{FlatPartition T}
+
+      else error|{FlatPartition T}
+      
+      end
+      
+   []nil then nil
+   
+   end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TEST TEST
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+declare
+Part = [a b2 c#3 [f5 f6 f7] silence note(name:c octave:6 sharp:true duration:2.0 instrument:none)]
+
+declare
+FlatPart = {FlatPartition Part}
+
+{Browse FlatPart}
