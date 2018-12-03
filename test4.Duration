@@ -1,0 +1,86 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Plusieurs tests des sous-fonctions de DurationChange
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 1. Duration renvoye la durée d'une flatpartition    OKKKK MAIS PARFOIS UNEXPECTED ERROR
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% La partition doit etre FLAT
+
+declare
+fun{Duration FlatPart}
+   local fun{Duration1 FlatPart Acc}
+	    case FlatPart of H|T
+	    then
+	       case H of A|B
+	       then {Duration1 T (Acc + A.duration)}
+	       else {Duration1 T (Acc + H.duration)}
+	       end
+	    []nil then Acc
+	    end
+	 end
+   in
+      {Duration1 FlatPart 0.0}
+   end
+end
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 2. DurationChangeChord change la duration d'un extended chord 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+declare
+fun{DurationChangeChord Chord NewTimeFactor}
+
+   case Chord of H|T
+   then
+      case H of note(name:N octave:O sharp:S duration:D instrument:I)
+      then note(name:N octave:O sharp:S duration:(NewTimeFactor*D) instrument:I)|{DurationChangeChord T NewTimeFactor}
+      []silence(duration:0.0)
+      then silence(duration:0.0)|{DurationChangeChord T NewTimeFactor}
+      end
+   []nil then nil
+   end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TEST
+declare
+L = [note(name:a octave:7 sharp:false duration:1.0 instrument:none) note(name:b octave:2 sharp:false duration:2.0 instrument:none) note(name:a octave:5 sharp:true duration:5.0 instrument:none)]
+declare
+NewChord = {DurationChangeChord L 4.0 2.0}
+{Browse NewChord}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% 3. fonction principale DurationChange
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+declare
+fun{DurationChange NewTime Part}
+   local FlatPart in                        % Toutes les transformations doivent renvoyer une <flat partition>
+      FlatPart = {FlatPartition Part}
+      local Time in                            % duree de la partition
+	 Time = {Duration FlatPart}
+	 local NewTimeF in                      % facteur par lequel il faut multiplier tout duration
+	    NewTimeF = (NewTime/Time)
+
+	    local fun{DurationChange1 NewTimeF FlatPart}
+		     case FlatPart of H|T
+		     then
+			case H of note(name:N octave:O sharp:S duration:D instrument:I)
+			then note(name:N octave:O sharp:S duration:(NewTimeF*D) instrument:I)|{DurationChange1 NewTimeF T}
+			[]silence(duration:0.0)
+			then silence(duration:0.0)|{DurationChange1 NewTimeF T}
+			else {DurationChangeChord H NewTimeF}|{DurationChange1 NewTimeF T}
+			end
+		     else nil
+		     end
+		  end
+	    in
+	       {DurationChange1 NewTimeF FlatPart}
+	    end
+	 end
+      end
+   end
+end
