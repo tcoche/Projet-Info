@@ -83,7 +83,8 @@
    fun{IsExtendedChord PartItem}
    
      case PartItem of H|T then                       %check si c'est une liste
-     {IsExtendedNote H}                              %check si le 1er element = extended note ou pas
+     {IsExtendedNote H} %check si le 1er element = extended note ou pas
+     []nil then true    
      else false                                      %si c'est pas une liste
      end
    end
