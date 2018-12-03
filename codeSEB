@@ -38,33 +38,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % PARTIE 2 : check quel type est <partition item>
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Sketch de la forme de notre fonction finale 
- '''  
-   fun {FlatPartition Partition}
-     case Partition of H|T 
-     then 
-       if {IsNote H}
-       then return H extended
-     
-       if {IsExtendedNote H}
-       then 
-           return that same already extended note
-         
-       elseif {IsExtendedChord H}
-       then return that same extended chord
-     
-       elseif it is a list
-       then it is a CHORD
-     
-       else 
-        the only thing left : transformations
-     
-    []nil then nil
-   
-   end
-  ''' 
+ 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
      
    fun{IsExtendedNote PartItem}
