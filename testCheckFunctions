@@ -1,0 +1,57 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% PARTIE 2 : check quel type est <partition item>      OKKKKK REUSSI
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+declare
+fun{IsExtendedNote PartItem}
+   case PartItem of note(name:V octave:W sharp:X duration:Y instrument:Z)
+   then true
+   []silence(duration:0.0)
+   then true
+   else false
+   end
+end          
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   
+declare
+fun{IsExtendedChord PartItem}
+
+   case PartItem of H|T then                       %check si c'est une liste
+      {IsExtendedNote H}                           %check si le 1er element = extended note ou pas
+   else false                                      %si c'est pas une liste
+   end
+end     
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+declare
+fun{IsNote PartItem}
+
+   case PartItem of Name#Octave
+   then true
+   else {IsAtom PartItem}
+   end
+   
+end 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TEST TEST
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+declare 
+ExtN1 = silence(duration:0.0)   % ou la version note()
+declare
+ExtN2 = note(name:d octave:8 sharp:true duration:5.0 instrument:none)
+
+{Browse {IsExtendedNote ExtN1}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+declare
+ExtC = [ExtN1 ExtN2]
+
+{Browse {IsExtendedChord ExtC}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+declare N1 N2 N3 N4 in
+N1 = a
+N2 = d2
+N3 = c#6
+N4 = silence
+
+{Browse {IsNote N1}}
