@@ -15,8 +15,6 @@ fun{Hauteur Note}
       end
 end
 
-{Browse {Hauteur note(name:a octave:5 sharp:false duration:5 instryument:none)}}
-
 declare
 fun{Exp Amount Int}
    local fun{ExpAcc Amount Int A}
@@ -34,30 +32,26 @@ declare
 fun{Frequence Note}
    local Expo in
       Expo=({Hauteur Note} div 12)
-      {Exp exp 2}*440
+      {Exp Expo 2}*440
    end
 end
 
 declare
 fun{Sample I Note}
-   local pi=3.141592 in
-      0.5*sin(2*pi*{Frequence Note}*I div 44100)
-   end
+   {Browse {Frequence Note}*I}
+   0.5*{Float.sin (2.0*3.14159*{Int.toFloat ({Frequence Note}*I)}/44100.0)}
 end
 
 declare
 fun {Samples Duration  Note}
    local Dur=Duration*44100 in
       local fun{Samples1 Dur Note I}
-	       if I<44100 then {Sample I  Note}|{Samples1 Dur Note I+1}
-	       elseif I==44100 then nil
+	       if I==Dur then nil
+	       else {Sample I Note}|{Samples1 Dur Note I+1}
 	       end
 	    end
       in
-	 {Samples1 Dur Note 0}
+	 {Samples1 Dur Note 1}
       end
    end
 end
-
-   
-   
