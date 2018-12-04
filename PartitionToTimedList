@@ -246,7 +246,12 @@ fun{Drone Sound Amount}
 
    local S in
       if {IsList Sound}
-      then S = {ChordToExtended Sound}
+      then if{IsExtendedChord Sound}
+	   then S = Sound
+	   else S = {ChordToExtended Sound}
+	   end
+      elseif {IsExtendedNote Sound}
+      then S = Sound
       else S = {NoteToExtended Sound}
       end
       local fun{Duplicate S Amount}
@@ -259,6 +264,21 @@ fun{Drone Sound Amount}
       end
    end
 end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% PARTIE 6 : transpose(  )
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+
 
 
 
