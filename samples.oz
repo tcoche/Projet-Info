@@ -39,8 +39,10 @@ end
 declare
 fun{Sample I Note}
    {Browse {Frequence Note}*I}
-   0.5*{Float.sin (2.0*3.14159*{Int.toFloat ({Frequence Note}*I)}/44100.0)}
+   0.5*{Float.sin (2.0*3.14159*{Int.toFloat ({Frequence Note}*I)}/(44100.0*Note.duration))}
 end
+
+
 
 declare
 fun {Samples Duration  Note}
