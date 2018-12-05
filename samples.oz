@@ -38,8 +38,8 @@ end
 {Browse {Frequence note(name:a octave:6 sharp:false duration:1.0 instrument note)}} %Doit renvoyer 1760
 
 declare
-fun{Sample I Note}
-   0.5*{Float.sin (2.0*3.14159*({Frequence Note}*I)/(44100.0*Note.duration))}
+fun{Sample I Note Freq Denom}
+   0.5*{Float.sin (2.0*3.14159*(Freq*I)/Denom)}
 end
 
 {Browse {Sample 4.0  note(name:c octave:4 sharp:true duration:1.0 instrument:none)}} %Doit renvoyer 0.079
@@ -48,10 +48,14 @@ end
 
 declare
 fun {Samples Duration  Note}
-   local Dur=Duration*44100.0 in
+   local Dur=Duration*44100.0 Freq={Frequence Note} Denom=44100.0*Note.duration in
       local fun{Samples1 Dur Note I}
 	       if I=={Float.toInt Dur}+1 then nil
-	       else {Sample {Int.toFloat I} Note}|{Samples1 Dur Note I+1}
+	       else case Note
+		    of silence(duration:D) then 0.0|{Samples1 Dur Note I+1}
+		    else {Sample {Int.toFloat I} Note Freq Denom}|{Samples1 Dur Note I+1}
+
+		    end
 	       end
 	    end
       in
@@ -60,5 +64,7 @@ fun {Samples Duration  Note}
    end
 end
 
+
 {Browse {Samples 0.00005 note(name:a octave:4 sharp:false duration:1.0 instrument:none)}} %Doit renvoyer une liste de deux element de Sample
 {Browse {Samples 1.0  note(name:c octave:4 sharp:true duration:1.0 instrument:none)}} %Doit renvoyer 44100 elements de Sample
+{Browse {Samples 0.00005 silence(duration:1.0)}} %Doit renvoyer une liste de deux element de Sample
