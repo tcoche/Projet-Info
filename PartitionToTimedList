@@ -270,12 +270,177 @@ end
 
 % PARTIE 6 : transpose(  )
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% fun{Transpose X ExtNote}
+
+% on veut transposer un extended note de plusieurs semi-tons
+
+% on va associer chaque note a un chiffre
+% L = [c c# d d# e f f# g g# a a# b]
+% devient
+% L = [1 2 3 4 5 6 7 8 9 10 11 12]
+
+% de cette facon on sait facilement utiliser le nombre donne en argument: X
+
+% 1. on créé une fonction qui convertit une note --> chiffre
+% 2. l'inverse donc un chiffre --> note
+% 3. on change une note sous forme de int
+% 4. on change une note sous forme extended note
+% 5. on mets tout ensemble !!!
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 1. N est extended note et on veut l'attribuer a un chiffre entre 1 et 12
+%%%%ATTENTION on ne tient pas compte de l'octave
+
+declare
+fun{NoteToInt N}
+   case N.name of c then
+      if N.sharp then 2
+      else 1
+      end
+   []d then
+      if N.sharp
+      then 4
+      else 3
+      end
+   []e then 5
+   []f then
+      if N.sharp
+      then 7
+      else 6
+      end
+   []g then
+      if N.sharp
+      then 9
+      else 8
+      end
+   []a then
+      if N.sharp
+      then 11
+      else 10
+      end
+   else 12
+   end
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 1. il existe une autre maniere avec moins de code mais plus de travail pour l ordinateur
+% declare
+% fun{NoteToInt N}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 2. on traduit le int en un extended note 
+%%% ATTENTION on ne fais pas guaffe a l'octave, il faut le changer par apres ET AUSSI la duration est mise a 1.0
+
+declare
+fun{IntToNote I}
+
+   local L in
+   L = [c c#4 d d#4 e f f#4 g g#4 a a#4 b]
+      local ChordNote
+      in ChordNote = {ChordToExtended L}
+
+      {Nth ChordNote I}
+
+      end
+   end
+end
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% 3. a function that changes the integer representing the note to the correct one
+%    while returning also the correct octave change
+
+declare
+fun{ChangeInt X NoteInt}
+   local Result1 Result2 in
+      if (X >= 0)
+      then Result1 = NoteInt + X
+	 local fun{CorrectResultP Result Acc}
+		  if (Result > 12)
+		  then {CorrectResultP (Result-12) (Acc+1)}
+		  else result(int:Result octave:Acc)
+		  end
+	       end
+	 in
+	    Result2 = {CorrectResultP Result1 0}
+	 end
+	 Result2
+
+      else
+	 Result1 = NoteInt + X
+	 local fun{CorrectResultN Result Acc}
+		  if (Result =< 0)
+		  then {CorrectResultN (Result+12) (Acc-1)}
+		  else result(int:Result octave:Acc)
+		  end
+	       end
+	 in
+	    Result2 = {CorrectResultN Result1 0}
+	 end
+	 Result2
+      end
+   end
+end
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 4. 
+
+declare
+fun{ChangeNote X Note}
+% on considere que Note est extended
+   case Note of silence(duration:0.0)
+   then silence(duration:0.0)
+   else
+      local NoteInt in
+	 NoteInt = {NoteToInt Note}
+	 local Result in
+	    Result = {ChangeInt X NoteInt}  % renvoi result(int octave)
+	    local NewNote in
+	       NewNote = {IntToNote Result.int}
+	       case NewNote of note(name:N octave:O sharp:S duration:D instrument:I)
+	       then note(name:N octave:(Note.octave + Result.octave) sharp:S duration:(Note.duration) instrument:I)
+	       else false
+	       end
+	    end
+	 end
+      end
+   end
+end
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+5.
+
+declare
+fun{Transpose X Part}
+
+   local FlatPart in
+   FlatPart = {FlatPartition Part}
+   
+      local fun{ChangeChord X Chord}
+            case Chord of H|T
+	    then {ChangeNote X H}|{ChangeChord X T}
+	    []nil then nil
+	    end
+	  end
+	  in
+	  
+	  case FlatPart of H|T 
+	  then
+	     if {IsList H}
+	     then {ChangeChord X H}|{Transpose X T}
+	     else {ChangeNote X H}|{Transpose X T}
+	     end
+	  []nil then nil
+	  end
+          end
+    end
+end
+
+   
+      
 
 
 
@@ -311,6 +476,12 @@ fun {FlatPartition Partition}
       else
 	 case H of duration(seconds:X Part)
 	 then {Append {DurationChange X Part} {FlatPartition T}}
+	 []stretch(factor:Factor Part)
+	 then {Append {Stretch Factor Part} {FlatPartition T}}
+	 []drone(note:Sound amount:Amount)
+	 then {Append {Drone Sound Amount} {FlatPartition T}}
+	 []transpose(semitones:X Part)
+	 then {Append {Transpose X Part} {FlatPartition T}}
 	 else false
 	 end
       end
