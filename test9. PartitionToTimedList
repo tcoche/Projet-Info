@@ -1,0 +1,117 @@
+%% toutes les autres sous fonctions doivent etre declare en dehors
+
+
+declare
+fun {FlatPartition Partition}
+   local
+      fun{DurationChange NewTime Part}
+	 local FlatPart in                        % Toutes les transformations doivent renvoyer une <flat partition>
+	    FlatPart = {FlatPartition Part}
+	    local Time in                            % duree de la partition
+	       Time = {Duration FlatPart}
+	       local NewTimeF in                      % facteur par lequel il faut multiplier tout duration
+		  NewTimeF = (NewTime/Time)
+
+		  {DurationChangeFactor NewTimeF FlatPart}
+	       end
+	    end
+	 end
+      end
+
+      fun{Stretch Factor Partition}
+   
+	 local FlatPart in
+	    FlatPart = {FlatPartition Partition}
+
+	    {DurationChangeFactor Factor FlatPart}
+	 end
+      end
+
+      fun{Drone Sound Amount}
+	 local S in
+	    if {IsList Sound}
+	    then if{IsExtendedChord Sound}
+		 then S = Sound
+		 else S = {ChordToExtended Sound}
+		 end
+	    elseif {IsExtendedNote Sound}
+	    then S = Sound
+	    else S = {NoteToExtended Sound}
+	    end
+	    local fun{Duplicate S Amount}
+		     if (Amount==0) then nil
+		     else S|{Duplicate S (Amount-1)}
+		     end
+		  end
+	    in
+	       {Duplicate S Amount}
+	    end
+	 end
+      end
+
+
+      fun{Transpose X Part}
+
+	 local FlatPart in
+	    FlatPart = {FlatPartition Part}
+   
+	    local fun{ChangeChord X Chord}
+		     case Chord of H|T
+		     then {ChangeNote X H}|{ChangeChord X T}
+		     []nil then nil
+		     end
+		  end
+	    in
+	       case FlatPart of H|T 
+	       then
+		  if {IsList H}
+		  then {ChangeChord X H}|{Transpose X T}
+		  else {ChangeNote X H}|{Transpose X T}
+		  end
+	       []nil then nil
+	       end
+	    end
+	 end
+      end
+   in
+      case Partition of H|T 
+      then
+	 if {IsList H}
+	 then
+	    if{IsExtendedChord H}
+	    then H|{FlatPartition T}
+	    else {ChordToExtended H}|{FlatPartition T}
+	    end
+
+	 elseif {IsNote H}
+	 then {NoteToExtended H}|{FlatPartition T}
+      
+	 elseif {IsExtendedNote H}
+	 then H|{FlatPartition T}
+
+	 else
+	    case H of duration(seconds:X Part)
+	    then {Append {DurationChange X Part} {FlatPartition T}}
+	    []stretch(factor:Factor Part)
+	    then {Append {Stretch Factor Part} {FlatPartition T}}
+	    []drone(note:Sound amount:Amount)
+	    then {Append {Drone Sound Amount} {FlatPartition T}}
+	    []transpose(semitones:X Part)
+	    then {Append {Transpose X Part} {FlatPartition T}}
+	    else false
+	    end
+	 end
+      []nil then nil
+      else false
+      end
+   end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+declare
+L = [a2 silence duration(seconds:5.0 [c3 c4 c5 transpose(semitones:12 [c#6 c#7])]) f#2 note(name:a octave:3 sharp:true duration:15.0 instrument:none)]
+
+declare
+FlatL = {FlatPartition L}
+
+{Browse FlatL}
