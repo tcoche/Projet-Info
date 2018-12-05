@@ -51,6 +51,35 @@ fun{Loop Seconds Music}
 
 declare
 fun{AddList L1 L2}
+   local M1={List.length L1} M2={List.length L2} L={Min M1 M2} in
+      local fun{AddList1 L1 L2 L}
+	       if L==0 then if M1>M2 then case L1
+					  of H|T then H+0|{AddList1 T nil L}
+					  [] nil then nil
+					  end
+			    else case L2
+				 of H|T then H+0|{AddList1 nil T L}
+				 []nil then nil
+				 end
+			    end
+	       else case L1
+		    of H|T then H+L2.1|{AddList1 T L2.2 L-1}
+		    []nil then nil
+		    end
+	       end
+	    end
+      in
+	 {AddList1 L1 L2 L}
+      end
+   end
+end
+
+
+{Browse {AddList [1 2] [1 2 3]}}
+
+
+
+
    if L2\=nil then case L1		      
 		   of H|T then H+L2.1|{AddList T L2.2}
 		   [] nil then nil
@@ -147,11 +176,11 @@ end
 
  declare
 fun {Echo Delay Decay Music}
-   local Del=Delay*44100 Mus=Music in
+   local Del=Delay*44100.0 Mus=Music in
       local fun {Echo1 Del Decay Music}
-	 if Del==0 then {Merge [Decay#Mus 1#Music]}
+	 if Del==0.0 then {Merge [Decay#Mus 1#Music]}
 	 else case Music
-	      of H|T then H|{Echo1 Del-1 Decay T}
+	      of H|T then H|{Echo1 Del-1.0 Decay T}
 	      [] nil then nil
 	      end
 	    end
@@ -161,6 +190,8 @@ fun {Echo Delay Decay Music}
       end
    end
 end
+
+{Browse {Echo 0.00002 0.5 [1 2 3]}}
 
 declare
 fun{FadeIn Duration Music}
