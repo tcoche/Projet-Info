@@ -1,18 +1,24 @@
 declare
 fun{Hauteur Note}
-      if Note.name==a andthen Note.sharp==false then 12*(Note.octave-4)
-      elseif Note.name==a andthen Note.sharp==true then 12*(Note.octave-4)+1
-      elseif Note.name==b andthen Note.sharp==false then 12*(Note.octave-4)+2
-      elseif Note.name==c andthen Note.sharp==false then 12*(Note.octave-4)-9
-      elseif Note.name==c andthen Note.sharp==true then 12*(Note.octave-4)-8
-      elseif Note.name==d andthen Note.sharp==false then 12*(Note.octave-4)-7
-      elseif Note.name==d andthen Note.sharp==true then 12*(Note.octave-4)-6
-      elseif Note.name==e andthen Note.sharp==false then 12*(Note.octave-4)-5
-      elseif Note.name==f andthen Note.sharp==false then 12*(Note.octave-4)-4
-      elseif Note.name==f andthen Note.sharp==true then 12*(Note.octave-4)-3
-      elseif Note.name==c andthen Note.sharp==true then 12*(Note.octave-4)-2
-      elseif Note.name==c andthen Note.sharp==true then 12*(Note.octave-4)-1
-      end
+   if Note.name==a then if  Note.sharp==false then 12*(Note.octave-4)
+			elseif Note.sharp==true then 12*(Note.octave-4)+1
+			end
+   elseif Note.name==b andthen Note.sharp==false then 12*(Note.octave-4)+2
+   elseif Note.name==c then if Note.sharp==false then 12*(Note.octave-4)-9
+			    elseif Note.sharp==true then 12*(Note.octave-4)-8
+			    end
+   elseif Note.name==d then if Note.sharp==false then 12*(Note.octave-4)-7
+			    elseif Note.sharp==true then 12*(Note.octave-4)-6
+			    end
+   elseif Note.name==e then 12*(Note.octave-4)-5
+   elseif Note.name==f then if Note.sharp==false then 12*(Note.octave-4)-4
+			    else 12*(Note.octave-4)-3
+			    end
+   elseif Note.name==c then if Note.sharp==false then 12*(Note.octave-4)-2
+			       else 12*(Note.octave-4)-1
+			    end
+   else 0
+   end
 end
 
 declare
