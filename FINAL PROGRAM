@@ -285,6 +285,7 @@ end
 % Procedure de creation pour
 % fun{Transpose X Part}
 % Transposer une partition de X demi-tons vers le heut ou vers le bas
+% On commence par faire
 % fun{Transpose X ExtNote}
 % Transposer un extended note de plusieurs semi-tons
 
@@ -304,8 +305,8 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% 1. N est extended note et on veut l'attribuer a un chiffre entre 1 et 12
-%%%%ATTENTION on ne tient pas compte de l'octave
+% 1. Attribuer le extended note N a un chiffre entre 1 et 12
+% Note : on ne tient pas compte de l'octave (et de la duree)
 
 declare
 fun{NoteToInt N}
@@ -339,8 +340,8 @@ fun{NoteToInt N}
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% 2. on traduit le int en un extended note 
-%%% ATTENTION on ne fais pas guaffe a l'octave, il faut le changer par apres ET AUSSI la duration est mise a 1.0
+% 2. Traduire un int en un extended note 
+%ATTENTION RAPPEL : on ne fais pas gaffe a l'octave, il faut le changer par apres ET AUSSI la duration est mise a 1.0
 
 declare
 fun{IntToNote I}
@@ -357,9 +358,8 @@ fun{IntToNote I}
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% 3. a function that changes the integer representing the note to the correct one
-% while returning also the correct octave change
+% 3. Change le int representant le note en le int souhaite (transpose)
+% Renvoie aussi le changement d'octave a effectuer
 
 declare
 fun{ChangeInt X NoteInt}
@@ -394,12 +394,12 @@ fun{ChangeInt X NoteInt}
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% 4. 
-% on considere que Note est extended
+% 4. Effectue la transposition sur un extended note Note
+% Note : Note doit est extended
 
 declare
 fun{ChangeNote X Note}
-% on considere que Note est extended
+
    case Note of silence(duration:D)
    then silence(duration:D)
    else
@@ -549,6 +549,7 @@ fun {PartitionToTimedList Partition}
       end
    end
 end
+
 
 
 
