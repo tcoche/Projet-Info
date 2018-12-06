@@ -637,7 +637,29 @@ fun{SamplesChord Chord}
    end
 end
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ %Cette fonction va renvoyer une liste d'echantillons qui corespondent a une partition
 
+declare
+fun{PartitionToSample Part P2T}
+   local FlatPart in
+      FlatPart = {P2T Part}
+
+      local fun{PartToSample FlatPart}
+	       case FlatPart of H|T
+	       then if {IsList H}
+		    then {SamplesChord H}|{PartToSample T}
+		    else {Samples H}|{PartToSample T}
+		    end
+	       []nil then nil
+	       end
+	    end
+      in
+	 {PartToSample FlatPart}
+      end
+   end
+end
+ 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    %Cette fontion Wave va chercher un fichier dans votre ordinateur, pour ensuite lire ce fichier grace a la fonction Project.readFile
 
