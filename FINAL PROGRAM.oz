@@ -285,7 +285,6 @@ end
 % Procedure de creation pour
 % fun{Transpose X Part}
 % Transposer une partition de X demi-tons vers le heut ou vers le bas
-% On commence par faire
 % fun{Transpose X ExtNote}
 % Transposer un extended note de plusieurs semi-tons
 
@@ -305,8 +304,8 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% 1. Attribuer le extended note N a un chiffre entre 1 et 12
-% Note : on ne tient pas compte de l'octave (et de la duree)
+% 1. N est extended note et on veut l'attribuer a un chiffre entre 1 et 12
+%%%%ATTENTION on ne tient pas compte de l'octave
 
 declare
 fun{NoteToInt N}
@@ -340,8 +339,8 @@ fun{NoteToInt N}
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% 2. Traduire un int en un extended note 
-%ATTENTION RAPPEL : on ne fais pas gaffe a l'octave, il faut le changer par apres ET AUSSI la duration est mise a 1.0
+% 2. on traduit le int en un extended note 
+%%% ATTENTION on ne fais pas guaffe a l'octave, il faut le changer par apres ET AUSSI la duration est mise a 1.0
 
 declare
 fun{IntToNote I}
@@ -358,8 +357,9 @@ fun{IntToNote I}
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% 3. Change le int representant le note en le int souhaite (transpose)
-% Renvoie aussi le changement d'octave a effectuer
+
+% 3. a function that changes the integer representing the note to the correct one
+% while returning also the correct octave change
 
 declare
 fun{ChangeInt X NoteInt}
@@ -394,12 +394,12 @@ fun{ChangeInt X NoteInt}
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% 4. Effectue la transposition sur un extended note Note
-% Note : Note doit est extended
+% 4. 
+% on considere que Note est extended
 
 declare
 fun{ChangeNote X Note}
-
+% on considere que Note est extended
    case Note of silence(duration:D)
    then silence(duration:D)
    else
@@ -719,7 +719,7 @@ end
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   %Merge recois une List de Music avec des facteur d'intesite du style [0.5#Music1 0.2 #Music2 0.3#Music3]
+   %Merge recois une List de Music avec des facteur d'intesite du style [0.5#Music1 0.2#Music2 0.3#Music3]
    %Doit retourner l'adition de leurs Sample dans le style d'une addition de vecteurs
 
 declare
@@ -860,56 +860,8 @@ fun{Cut Start Finish Music}
    end
 end
 
-
-local
-   
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   %Cette fontion Wave va chercher un fichier dans votre ordinateur, pour ensuite lire ce fichier grace a la fonction Project.readFile
-
-
-fun {Wave FileName}
-   {Project.readFile FileName} %FileName est le chemin empreinte sur l'ordinateur pour retrouver le fichier
-end
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                                                                                                                             %
-%                       CHAQUE FILTRE RECOIS UNE MUSIQUE QUI EST UNE LISTE DE SAMPLE                                          %
-%                                                                                                                             %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-%Le filtre reverse va jouer la musique a l'envers (retourner la liste: le premier element devient le dernier etc.).
-%Nous pouvons utiliser la fonction reverse qui est deja implementee dans Mozart. Si la liste est vide, il renverra une liste vide
-
-declare
-fun {Reverse Music}
-   case Music
-   of nil then nil
-   [] H|T then {List.reverse Music} %Renvoie une liste inversee
-   end
-end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%Le filtre repeat va repeter la liste de Musique un certain nombre de fois.
-%Il va parcourir toute la liste un certain nombre de fois et creer une nouvelle liste chaque fois que la liste va etre parcouru.
-
-declare
-fun {Repeat Amount Music}
-   local Mus=Music in %l'argument Music de depart doit etre stocke pour pouvoir le rappeler
-      local fun{Repeat1 Amount Music} 
-	       if Amount==0 then nil
-	       else case Music
-		    of H|T then H|{Repeat1 Amount T}
-		    []nil then {Repeat1 Amount-1 Mus} %des qu'on arrive a la fin de la liste on rappel la liste initial pour repeter celle-ci
-		    end
-	       end
-	    end
-      in
-	 {Repeat1 Amount Mus}
-      end
-   end
-end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 declare
   fun{Mix P2T Music}
