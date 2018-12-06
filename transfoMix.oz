@@ -2,17 +2,17 @@ fun{Mix P2T Music}
    case Music
    of nil then nil
    [] H|T then case H
-	       of sample(Samples) then
-	       [] partition(Partition) then 
-	       [] wave(FileName) then 
-	       [] merge(IntenseMusic) then
+	       of samples(note:Note)) then {Samples Note}
+	       [] partition(Partition) then {Partition P2T}
+	       [] wave(file:FileName) then {Wave FileName}
+	       [] merge(IntenseMusics) then {Merge IntenseMusics}
 	       [] reverse(Music)then {Reverse Music}
 	       [] repeat(amount:Integer Music) then {Repeat Integer Music}
 	       [] loop(duration:Duration Music) then {loop Duration}
-	       [] clip(low:Sample high:Sample Music) then
-	       [] echo(delay:Duration Music) then 
-	       [] fade(in:Duration out:Duration Music) then
-	       [] cut(start:Duration end:Duration Music) then
+	       [] clip(low:Low high:High Music) then {Clip Low High Music}
+	       [] echo(delay:Duration decay:Factor Music) then {Echo Duration Factor Music}
+	       [] fade(in:In out:Out Music) then {Fade In Out Music}
+	       [] cut(start:Start stop:Stop Music) then {Cut Start Stop Music}
 	       end
    end
 end
@@ -46,19 +46,15 @@ fun {Repeat Amount Music}
 end
 
 declare
-fun{Loop Seconds Music}
-
-
-declare
 fun{AddList L1 L2}
-   local M1={List.length L1} M2={List.length L2} L={Min M1 M2} in
+   local M1={List.length L1} M2= {List.length L2} L={Min M1 M2} in
       local fun{AddList1 L1 L2 L}
 	       if L==0 then if M1>M2 then case L1
-					  of H|T then H+0|{AddList1 T nil L}
+					  of H|T then H+0.0|{AddList1 T nil L}
 					  [] nil then nil
 					  end
 			    else case L2
-				 of H|T then H+0|{AddList1 nil T L}
+				 of H|T then H+0.0|{AddList1 nil T L}
 				 []nil then nil
 				 end
 			    end
@@ -75,20 +71,8 @@ fun{AddList L1 L2}
 end
 
 
-{Browse {AddList [1 2] [1 2 3]}}
-
-
-
-
-   if L2\=nil then case L1		      
-		   of H|T then H+L2.1|{AddList T L2.2}
-		   [] nil then nil
-		   end
-   else L1
-   end
-end
-
-{AddList [1 2 3] [1 2 3]}
+{Browse {AddList [1.0 2.0 ] [1.0 2.0 3.0]}}
+{Browse {AddList nil [1.0 2.0 3.0]}}
 
 declare
 fun{IntenseMusic Facteur Music}
@@ -107,7 +91,7 @@ end
 {Browse {IntenseMusic 0.5 ([1.0 2.0 3.0])}}
 
 
-   %Merge recois une List de Music avec des facteur d'intesité du style [0.5#Music1 0.2 #Music2 0.3#Music3]
+   %Merge recois une List de Music avec des facteur d'intesite du style [0.5#Music1 0.2 #Music2 0.3#Music3]
    %Doit retourner l'adition de leurs Sample dans le style d'une addition de vecteur.
    % (Pas encore opti pour les liste de differentes longueurs)
 
@@ -119,6 +103,7 @@ fun{Merge IntenseMusics}
 			of Facteur#Music then case Music
 					      of Atom then case Atom
 							   of A|B then {Merge1 T {AddList {IntenseMusic Facteur Music} L}}
+							   [] nil then {Merge1 T {AddList {IntenseMusic Facteur Music} L}}
 							   else L
 							   end
 					      else L
@@ -136,7 +121,9 @@ end
 	       
 
 declare P=[1.0 2.0 3.0]
-{Browse {Merge [0.5#P 0.3#P 0.1#P]}}
+declare O=nil
+declare T=[1.0 2.0]
+{Browse {Merge [0.5#P 0.3#O 0.5#T]}}
 
 declare
 fun{Loop Duration Music}
@@ -178,7 +165,7 @@ end
 fun {Echo Delay Decay Music}
    local Del=Delay*44100.0 Mus=Music in
       local fun {Echo1 Del Decay Music}
-	 if Del==0.0 then {Merge [Decay#Mus 1#Music]}
+	 if Del==0.0 then {Merge [Decay#Mus 1.0#Music]}
 	 else case Music
 	      of H|T then H|{Echo1 Del-1.0 Decay T}
 	      [] nil then nil
@@ -191,52 +178,59 @@ fun {Echo Delay Decay Music}
    end
 end
 
-{Browse {Echo 0.00002 0.5 [1 2 3]}}
-
+{Browse {Echo 0.0 0.5 [1.0 2.0 3.0]}}
+      
 declare
-fun{FadeIn Duration Music}
-   local D=Duration*44100 Facteur=1.0/D in
-      local fun{FadeIn1 D Facteur Music}
-	       if D==0 then Music
+fun{Fade In Out Music}
+   local DurIn = In*44100.0 DurOut = Out*44100.0 L={List.length Music}-{Float.toInt DurOut} FactIn=1.0/DurIn FactOut=1.0/DurOut in
+      {Browse L}
+      local fun{Fade1 DurIn DurOut FactIn F Music A L}
+	       if A<{Float.toInt DurIn} then case Music
+			       of H|T then H*FactIn|{Fade1 DurIn DurOut FactIn+FactIn F T A+1 L}
+			       [] nil then nil
+			       end
+	       elseif A<L then case Music
+			       of H|T then H|{Fade1 DurIn DurOut FactIn FactOut T A+1 L}
+			       []nil then nil
+			       end
 	       else case Music
-		    of H|T then Facteur*H|{FadeIn1 D Facteur+Facteur T}
+		    of H|T then H*F|{Fade1 DurIn DurOut FactIn F-FactOut T A+1 L}
 		    []nil then nil
 		    end
 	       end
 	    end
       in
-	 {FadeIn1 D 0 Music}
+	 {Fade1 DurIn DurOut FactIn 1.0 Music 0 L}
       end
    end
 end
 
+
+declare P=[1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0]
+{Browse {List.length P}}
+{Browse {Fade 0.0 0.00005 P}}
+
 declare
-fun{FadeOut Duration Music}
-   local D=Duration*44100.0 F=1.0/D L={List.length Music}-D in
-      local fun{FadeOut1 D Facteur L Music A}
-	       if D==0 then nil
-	       else case Music
-		  of H|T then if A<L then H|{FadeOut1 D Facteur L T A+1}
-			      else Facteur*H|{FadeOut1 D Facteur-F L T (A+1)}
-			      end
-		  [] nil then nil
-		  end
+fun{Cut Start Finish Music}
+   local S={Float.toInt Start*44100.0} F={Float.toInt Finish*44100.0} in
+      local fun{Cut1 S F Music A}
+	       case Music
+	       of H|T then if A<S then {Cut1 S F T A+1}
+			   elseif A<F then H|{Cut1 S F T A+1}
+			   else nil
+			   end
+	       []nil then if A<F then 0|{Cut1 S F nil A+1}
+			  else nil
+			  end
 	       end
 	    end
       in
-	 {FadeOut1 D 1.0 L Music 0}
+	 {Cut1 S F Music 0}
       end
    end
 end
 
-      
-
-
-declare
-fun{Fade Start Out Music}
-   local L={List.Length Music}-(Out*44100) in
-      local fun{Fade1 Start Out Music A}
-	       
+{Browse {Cut 0.00004 0.00012 [1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0]}}
 	       
 	       
       
