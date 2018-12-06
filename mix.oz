@@ -64,6 +64,8 @@ fun {Samples Note}
    end
 end
 
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    %Cette fontion Wave va chercher un fichier dans votre ordinateur, pour ensuite lire ce fichier grace a la fonction Project.readFile
 
@@ -306,17 +308,17 @@ local
       case Music
       of nil then nil
       [] H|T then case H
-		  of samples(SamplesList) then {Samples SamplesList}
-		  [] partition(Partition) then {Partition P2T}
-		  [] wave(file:FileName) then {Wave FileName}
-		  [] merge(IntenseMusics) then {Merge IntenseMusics}
-		  [] reverse(Music)then {Reverse Music}
-		  [] repeat(amount:Integer Music) then {Repeat Integer Music}
-		  [] loop(duration:Duration Music) then {loop Duration}
-		  [] clip(low:Low high:High Music) then {Clip Low High Music}
-		  [] echo(delay:Duration decay:Factor Music) then {Echo Duration Factor Music}
-		  [] fade(in:In out:Out Music) then {Fade In Out Music}
-		  [] cut(start:Start stop:Stop Music) then {Cut Start Stop Music}
+		  of samples(SamplesList) then SamplesList|{Mix P2T T}
+		  [] partition(Partition) then 
+		  [] wave(file:FileName) then {Wave FileName}|{Mix P2T T}
+		  [] merge(IntenseMusics) then {Merge IntenseMusics}|{Mix P2T T}
+		  [] reverse(Music)then {Reverse Music}|{Mix P2T T}
+		  [] repeat(amount:Integer Music) then {Repeat Integer Music}|{Mix P2T T}
+		  [] loop(duration:Duration Music) then {Loop Duration}|{Mix P2T T}
+		  [] clip(low:Low high:High Music) then {Clip Low High Music}|{Mix P2T T}
+		  [] echo(delay:Duration decay:Factor Music) then {Echo Duration Factor Music}|{Mix P2T T}
+		  [] fade(in:In out:Out Music) then {Fade In Out Music}|{Mix P2T T}
+		  [] cut(start:Start stop:Stop Music) then {Cut Start Stop Music}|{Mix P2T T}
 		  end
       end
    end
