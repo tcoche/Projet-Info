@@ -420,8 +420,11 @@ fun{ChangeNote X Note}
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%5.
-% on doit inserer ceci dans P2T
+% cette fonction utilise PartitionToTimedList donc elle doit se trouver a l'interieur de celui ci
+% declarer localement
+
+%5. la fonction principale
+% Transposer une partition de X demi-tons vers le heut ou vers le bas
 
 %fun{Transpose X Part}
 %	    local FlatPart in
@@ -451,30 +454,27 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% explication GENERALE
-%
-%
-%
-%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% La fonction : PARTITION TO TIMED LIST
 
+%cette fonction permet de transformer une partition musicale en 
+% une liste de notes et d'accords, chacun associe a une duree.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 declare
 fun {PartitionToTimedList Partition}
    local
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
-      % NewTime doit etre un FLOAT
-
       fun{DurationChange NewTime Part}
 	 local FlatPart in                        % Toutes les transformations doivent renvoyer une <flat partition>
 	    FlatPart = {PartitionToTimedList Part}
 	    local Time in                            % duree de la partition
 	       Time = {Duration FlatPart}
-	       local NewTimeF in                      % facteur par lequel il faut multiplier tout duration
+	       local NewTimeF in                      
 		  NewTimeF = (NewTime/Time)
 		  {DurationChangeFactor NewTimeF FlatPart}
 	       end
@@ -482,7 +482,8 @@ fun {PartitionToTimedList Partition}
 	 end
       end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-      fun{Stretch Factor Partition}
+     
+     fun{Stretch Factor Partition}
 	 local FlatPart in
 	    FlatPart = {PartitionToTimedList Partition}
 
@@ -490,6 +491,7 @@ fun {PartitionToTimedList Partition}
 	 end
       end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      
       fun{Transpose X Part}
 	 local FlatPart in
 	    FlatPart = {PartitionToTimedList Part}
@@ -549,7 +551,6 @@ fun {PartitionToTimedList Partition}
       end
    end
 end
-
 
 
 
