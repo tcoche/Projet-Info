@@ -17,8 +17,10 @@ fun{Mix P2T Music}
    end
 end
 
-declare
-[Project] = {Link ['Project2018.ozf']}
+
+
+%Cette fontion Wave va chercher un fichier dans votre ordinateur, pour ensuite lire ce fichier grace a finction Project.readFile
+%la complexite temporelle de cette fonction est Theta=1 car elle va aller chercher le fichier directement 
 declare
 fun {Wave FileName}
 {Project.readFile FileName}
@@ -26,8 +28,15 @@ end
 
 {Browse {Wave 'C:/Users/Theop/Desktop/ozplayer/wave/animals/cow.wav'}}
 
-%L'argument Music est une list de Sample
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                                                                             %
+%                       CHAQUE FILTRE RECOIS UNE MUSIQUE QUI EST UNE LISTE DE SAMPLE                                          %
+%                                                                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
+%Le filtre reverse va jouer la musique a l'envers (retourner la liste: le premier element devient le dernier etc.).
+%Nous pouvons utiliser la fonction reverse qui est deja implementee dans Mozart. Si la liste est vide, il renverra une liste vide
 declare
 fun {Reverse Music}
    case Music
@@ -36,14 +45,31 @@ fun {Reverse Music}
    end
 end
 
-%L'argument de Repeat est une liste de Sample
+%Le filtre repeat va repeter la liste de Musique un certain nombre de fois.
+%Il va parcourir toute la liste un certain nombre de fois et créer une nouvelle liste chaque fois que la liste va etre parcouru.
 
 declare
 fun {Repeat Amount Music}
-   if Amount==0 then nil
-   else  Music|{Repeat Amount-1 Music}
+   local Mus=Music in
+      local fun{Repeat1 Amount Music} 
+	       if Amount==0 then nil
+	       else case Music
+		    of H|T then H|{Repeat1 Amount T}
+		    []nil then {Repeat1 Amount-1 Mus}
+		    end
+	       end
+	    end
+      in
+	 {Repeat1 Amount Mus}
+      end
    end
 end
+
+
+{Browse {Repeat 5 [1.0 2.0 3.0]}}
+
+%AddList est une sous-fonctions pour savoir faire Merge plus facilement.
+%AddList va sommer deux listes qui ne sont pas forcement de meme longueur.
 
 declare
 fun{AddList L1 L2}
@@ -74,6 +100,9 @@ end
 {Browse {AddList [1.0 2.0 ] [1.0 2.0 3.0]}}
 {Browse {AddList nil [1.0 2.0 3.0]}}
 
+%IntenseMusic est une fonction pour creer des musiques intensifier par un cerain facteur.
+%la fonction va parcourir la liste et multiplier chaque element par le facteur donner en argument
+
 declare
 fun{IntenseMusic Facteur Music}
    case Music
@@ -92,8 +121,7 @@ end
 
 
    %Merge recois une List de Music avec des facteur d'intesite du style [0.5#Music1 0.2 #Music2 0.3#Music3]
-   %Doit retourner l'adition de leurs Sample dans le style d'une addition de vecteur.
-   % (Pas encore opti pour les liste de differentes longueurs)
+   %Doit retourner l'adition de leurs Sample dans le style d'une addition de vecteurs
 
 declare
 fun{Merge IntenseMusics}
@@ -125,6 +153,8 @@ declare O=nil
 declare T=[1.0 2.0]
 {Browse {Merge [0.5#P 0.3#O 0.5#T]}}
 
+%Le filtre Loop va repeter une musique pour un certain temps 
+%Si la duree de Loop s'arrete au milieu d'une musique la Musique s'arrete en meme temps
 declare
 fun{Loop Duration Music}
    local  Dur={Float.toInt Duration*44100.0} Mus=Music in
@@ -145,6 +175,9 @@ end
 
 {Browse {Loop 0.00018 [958.4 785.5 885.6]}}
  
+%Le filtre Clip sert a mettre une valeur minimum ou maximum aux echantillons d'une Liste.
+%Si cette valeur est depassee alors la valeur de l'echantillon en question va etre changer
+%vers le valeur maximum ou minimum en fonction de sa valeur
 declare
 fun{Clip Low High Music}
    if High<Low then Error
@@ -160,6 +193,10 @@ end
 
 
 {Browse {Clip 200.0 800.0 [440.0 525.0 954.2 198.3 ] }}
+
+%La fonction Echo va creer un echo dans la musique.
+%La musique et une copie de celle ci vont donc s'aditionner
+%avec un delais definie pour le debut de la copie et une intensité reduite.
 
  declare
 fun {Echo Delay Decay Music}
@@ -179,7 +216,10 @@ fun {Echo Delay Decay Music}
 end
 
 {Browse {Echo 0.0 0.5 [1.0 2.0 3.0]}}
-      
+
+%Fade va faire en sorte de demarrer une musique avec une intensite 0 et de faire en sorte qu'en une certaine duree l'intensite de la musique soit normale.
+%La fonction va aussi faire en sorte que la 
+%
 declare
 fun{Fade In Out Music}
    local DurIn = In*44100.0 DurOut = Out*44100.0 L={List.length Music}-{Float.toInt DurOut} FactIn=1.0/DurIn FactOut=1.0/DurOut in
