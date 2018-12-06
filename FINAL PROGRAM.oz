@@ -905,7 +905,7 @@ declare
       of nil then nil
       [] H|T then case H
 		  of samples(SamplesList) then SamplesList|{Mix P2T T}
-		  [] partition(Partition) then 
+		  [] partition(Part) then {PartitionToSample Part P2T}|{Mix P2T T}
 		  [] wave(FileName) then {Wave FileName}|{Mix P2T T}
 		  [] merge(IntenseMusics) then {Merge IntenseMusics}|{Mix P2T T}
 		  [] reverse(Music)then {Reverse Music}|{Mix P2T T}
