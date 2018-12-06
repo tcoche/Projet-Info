@@ -626,6 +626,16 @@ fun {Samples Note}
    end
 end
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ %Cette fonction va renvoyer une liste d'echantillons qui corespondent a une Chord d'une certaine duree
+declare
+fun{SamplesChord Chord}
+   case Chord of H|T
+   then
+      {Samples H}|{SamplesChord T}
+   []nil then nil
+   end
+end
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
